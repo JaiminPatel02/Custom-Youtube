@@ -4,9 +4,10 @@
   "description": "my custome youtube backend using MERN",
   "main": "index.js",
   "type": "module",
-  "scripts": {
-    "Dev": "nodemon index.js"
-  },
+ "scripts": {
+  "dev": "nodemon -r dotenv/config src/index.js"
+},
+
   "keywords": [
     "custome",
     "youtube",
@@ -21,5 +22,11 @@
   "devDependencies": {
     "nodemon": "^3.1.9",
     "prettier": "^3.5.3"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "express": "^5.1.0",
+    "mongodb": "^6.15.0",
+    "mongoose": "^8.13.2"
   }
 }
