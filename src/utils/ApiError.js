@@ -15,8 +15,8 @@ class ApiError extends Error {
 
         // production  kai file ma error ave che e ke 
 
-        if (statck) { 
-            this.stack = statck
+        if (stack) { 
+            this.stack = stack
         } 
         else { Error.captureStackTrace(this, this.constructor) }
     }
