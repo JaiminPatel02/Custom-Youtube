@@ -7,7 +7,7 @@ import fs from "fs";
         api_secret: process.env.COULDNARY_CLOULD_TOKEN
     });
 
-const uploadOnClouldinary = async (localFilePath) => {
+const uploadOnCloudinary = async (localFilePath) => {
         try {
             if (!localFilePath) return null
             // upload the file on clouldinary
@@ -27,4 +27,4 @@ const uploadOnClouldinary = async (localFilePath) => {
 
 
 
-export {cloudinary}
+export {uploadOnCloudinary}
