@@ -1,4 +1,3 @@
-// src/app.js
 
 import express from "express";
 import cookieParser from "cookie-parser";
@@ -27,10 +26,10 @@ app.use(express.static("public"));
 app.use(cookieParser());
 
 // Routes import
-import userRouter from "./routes/user.routs.js";  
+import userRouter from './routes/user.routes.js'
 
 
 // Routes declaration
-app.use("/api/v1/users", userRouter);
+app.use("/api/v1/users", userRouter)
 
 export { app }; // Export the app to be used in the index.js file
