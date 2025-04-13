@@ -5,7 +5,24 @@ import {uploadOnCloudinary} from "../utils/cloudinary.js"
 import { ApiResponse } from "../utils/ApiResponce.js"
 
 
-const registerUser = asyncHandler( async (req, res) => {
+const generateAccessAndRefreshToken = async (userID) => {
+    try {
+        const user = await User.findById(userID)
+        const accessToken = user.generateAccessToken()
+        const refreshToken = user.generateRefreshToken()
+        
+        user.refreshToken = refreshToken
+        await  user.save({validateBeforeSave: false})
+        
+        return {accessToken, refreshToken}
+
+
+    } catch (error) {
+        throw new ApiError(500, "something went wrong while generating refresh and access token")
+    }
+}
+ 
+const registerUser = asyncHandler(async (req, res) => {
     // get user details from frontend
     // validation - not empty
     // check if user already exists: username, email
@@ -17,7 +34,7 @@ const registerUser = asyncHandler( async (req, res) => {
     // return res
 
 
-    const {fullName, email, username, password } = req.body
+    const { fullName, email, username, password } = req.body
     //console.log("email: ", email);
 
     if (
@@ -36,7 +53,7 @@ const registerUser = asyncHandler( async (req, res) => {
     //console.log(req.files);
 
     const avatarLocalPath = req.files?.avatar[0]?.path;
-    //const coverImageLocalPath = req.files?.coverImage[0]?.path;
+    //const coverImageLocalPath = req.files?.coverImage[0]?.path; question markvada maerror ave empty array upload nathyevi to niche nu lakh 
 
     let coverImageLocalPath;
     if (req.files && Array.isArray(req.files.coverImage) && req.files.coverImage.length > 0) {
@@ -60,7 +77,7 @@ const registerUser = asyncHandler( async (req, res) => {
         fullName,
         avatar: avatar.url,
         coverImage: coverImage?.url || "",
-        email, 
+        email,
         password,
         username: username.toLowerCase()
     })
@@ -77,6 +94,76 @@ const registerUser = asyncHandler( async (req, res) => {
         new ApiResponse(200, createdUser, "User registered Successfully")
     )
 
-} )
+});
 
-export { registerUser };   
+const loginUser = asyncHandler(async (req, res) => { 
+    // req body -> data
+    // username or email
+    // find the user
+    // check Password
+    // access and refresh token
+    // send cookies
+    
+    const { email, username, password } = req.body
+    
+    if (!username || !email) {
+        throw new ApiError(400 , "Username is required")
+    }
+   const user =  await User.findOne({
+        $or :[{username},{email}]
+   })
+    
+    if (!user) {
+        throw new ApiError(404, "User does not exist")
+    }
+    const ispasswordValid = await user.ispasswordCorrect(password)
+    
+    if (!ispasswordValid) {
+        throw new ApiError(401, "Invalid User Credentitals")
+    }
+    const { accessToken, refreshToken } = await generateAccessAndRefreshToken(user._id)
+
+    const loggedInUser = await User.findById(user._id).select(
+        ("-password -refreshToken")
+    )
+
+    const opetions = {
+        httpOnly: true,
+        secure: true
+    }
+
+    return res
+        .status(200)
+        .cookie("accessToken", accessToken, opetions)
+        .cookie("refreshToken", refreshToken, opetions)
+        .json(
+            new ApiResponse(
+                200, 
+                {
+                    user: loggedInUser , accessToken ,refreshToken
+                },
+                "User logged In successfully"
+            )
+        )
+});
+
+const logoutUser = asyncHandler(async (req, res) => {
+    await User.findByIdAndUpdate(
+        req.user._id,
+        {
+            $set: {refreshToken : undefined}
+        },
+        {new :true }
+    )
+    const opetions = {
+                        httpOnly: true,
+                        secure: true
+    }
+    return res 
+        .status(200)
+        .clearCookie("accessToken", opetions)
+        .clearCookie("refreshToken" , opetions)
+    .json(new ApiResponse(200, {} , "User logged out"))
+})
+
+export { registerUser, loginUser ,logoutUser };   
