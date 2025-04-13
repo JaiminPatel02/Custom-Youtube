@@ -48,7 +48,7 @@ const userSchema = new Schema(
         // User password (will be hashed before saving)
         password: {
             type: String,
-            required: [true, 'Password is required']
+            required: [true, 'password is required']
         },
         // Refresh token for authentication (optional, for session management)
         refreshToken: {
@@ -69,7 +69,7 @@ userSchema.pre("save", async function (next) {
 });
 
 // Instance method: checks if entered password matches hashed password in DB
-userSchema.methods.isPasswordCorrect = async function(password) {
+userSchema.methods.ispasswordCorrect = async function(password) {
     return await bcrypt.compare(password, this.password);
 };
 
