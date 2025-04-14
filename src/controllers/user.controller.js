@@ -193,52 +193,63 @@ const logoutUser = asyncHandler(async(req, res) => {
 
 const refreshAccessToken = asyncHandler(async (req, res) => {
     try {
-        const incomingRefreshToken = req.cookie.refreshToken || req.body.refreshToken
-    
-        if (incomingRefreshToken) {
-            throw new ApiError(401 , "Unauthorized access")
+        // Get refresh token from cookies (GET request) or body (POST request)
+        const incomingRefreshToken = req.cookies.refreshToken || req.body.refreshToken;
+
+        // Validate token presence
+        if (!incomingRefreshToken) {
+            throw new ApiError(401, "Unauthorized access - Refresh token missing");
         }
-    
+
+        // Verify refresh token
         const decodedToken = jwt.verify(
             incomingRefreshToken,
             process.env.REFRESH_TOKEN_SECRET
-        )
-    
-        const user = await User.findById(decodedToken?._id)
-        
+        );
+
+        // Find user
+        const user = await User.findById(decodedToken?._id);
         if (!user) {
-            throw new ApiError (401 , "Invalid Refresh Token")
-            
+            throw new ApiError(401, "Invalid Refresh Token");
         }
-        if (incomingRefreshToken !== user?.refreshToken ) {
-            throw new ApiError(401, " Refresh Token is expire or used topa badhu same rakhne") 
+
+        // Match token with stored token
+        if (incomingRefreshToken !== user.refreshToken) {
+            throw new ApiError(401, "Refresh Token is expired or does not match");
         }
+
+        // Create new tokens
+        const { accessToken, refreshToken: newRefreshToken } =
+            await generateAccessAndRefereshTokens(user._id);
+
+        // Set cookies
         const options = {
-            httpOnly: true, 
+            httpOnly: true,
             secure: process.env.NODE_ENV === "production",
             sameSite: "Strict",
-        }
-    
-        const {accessToken, newRefreshToken} = await generateAccessAndRefereshTokens(user._id)
-         
+        };
+
+        // Send cookies and response
         return res
             .status(200)
-            .accessToken("accessToken" , accessToken ,options)
-            .refreshToken("newRefreshToken", newRefreshToken, options)
+            .cookie("accessToken", accessToken, options)
+            .cookie("refreshToken", newRefreshToken, options)
             .json(
                 new ApiResponse(
                     200,
-                    { accessToken, refreshToken: newRefreshToken },
-                    "Access Token Refreshred "
+                    {
+                        accessToken,
+                        refreshToken: newRefreshToken,
+                    },
+                    "Access Token Refreshed"
                 )
-            )
-        
-    
+            );
     } catch (error) {
-        throw new ApiError(401, error?.message || "Invalid Refresh token")
+        throw new ApiError(401, error?.message || "Invalid Refresh Token");
     }
+});
 
-})
+
 
 
 
