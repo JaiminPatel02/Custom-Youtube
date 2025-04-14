@@ -8,8 +8,8 @@ const app = express();
 // Enable CORS to allow requests from a specified origin
 // `credentials: true` allows cookies and auth headers to be sent cross-origin
 app.use(cors({
-    origin: process.env.CORS_ORIGIN, // Set the origin dynamically from environment variables
-    credentials: true // Allow sending cookies along with the request
+    origin: process.env.CORS_ORIGIN,
+    credentials: true
 }));
 
 // Parse incoming JSON requests with a size limit of 16kb
