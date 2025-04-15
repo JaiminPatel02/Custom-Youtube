@@ -193,7 +193,7 @@ const logoutUser = asyncHandler(async(req, res) => {
 
 const refreshAccessToken = asyncHandler(async (req, res) => {
     try {
-        // Get refresh token from cookies (GET request) or body (POST request)
+        
         const incomingRefreshToken = req.cookies.refreshToken || req.body.refreshToken;
 
         // Validate token presence
