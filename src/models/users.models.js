@@ -14,12 +14,12 @@ const userSchema = new Schema(
             trim: true,
             index: true
         },
-        // Unique email address of the user (lowercased, trimmed)
+      
         email: {
             type: String,
             required: true,
             unique: true,
-            lowercase: true, // <-- Fixed typo from 'lowecase'
+            lowercase: true, 
             trim: true,
         },
         // Full name of the user (trimmed, indexed for search)
