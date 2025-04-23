@@ -294,7 +294,7 @@ const updateAccountDetails = asyncHandler(async(req, res) => {
         {
             $set: {
                  fullName,
-                email
+                 email
             }
         },
         {new: true}
@@ -337,7 +337,6 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
     )
 })
 
-
 const updateUserCoverImage = asyncHandler(async (req, res) => {
     const coverImageLocalPath = req.file?.path
     if (!coverImageLocalPath) {
@@ -368,8 +367,6 @@ const updateUserCoverImage = asyncHandler(async (req, res) => {
         new ApiResponse(200, updatedUser, "Cover image updated successfully")
     )
 })
-
-
 
 const getUserChannelProfile = asyncHandler(async(req, res) => {
     const {username} = req.params
@@ -442,7 +439,6 @@ const getUserChannelProfile = asyncHandler(async(req, res) => {
         new ApiResponse(200, channel[0], "User channel fetched successfully")
     )
 })
-
 
 const getWatchHistory = asyncHandler(async(req , res) => {
     const user = await User.aggregate([
