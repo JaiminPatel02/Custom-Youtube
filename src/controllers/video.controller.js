@@ -100,7 +100,8 @@ const publishVideo = asyncHandler(async (req, res) => {
             $set: {
                 title,
                 description,
-                thumbnail: thumbnail.url
+                thumbnail: thumbnail.url,
+              
             }
         },
         { new: true }
@@ -178,8 +179,29 @@ const togglePublishStatus = asyncHandler(async (req, res) => {
             "You can't toogle publish status as you are not the owner"
         );
     }
-    
+    const toggledVideoPublish = await Video.findByIdAndUpdate(
+        videoId,
+        {
+            $set: {
+                isPublish: !video?.isPublish
+            }
+        },
+        { new: true }
+    );
 
+    if (!toggledVideoPublish) {
+        throw new ApiError(500, "Failed to toogle video publish status");
+    }
+
+    return res
+        .status(200)
+        .json(
+            new ApiResponse(
+                200,
+                { isPublish: toggledVideoPublish.isPublish },
+                "Video publish toggled successfully"
+            )
+        );
 })
 
  //get video by id
@@ -347,8 +369,9 @@ const getAllVideos = asyncHandler(async (req, res) => {
 
      // fetch videos only that are set isPublished as true
     pipeline.push({
-        $match: { ispublished : true }
-    })
+    $match: { isPublish: true    }
+});
+
 
     //sortBy can be views, createdAt, duration
     //sortType can be ascending(-1) or descending(1)
