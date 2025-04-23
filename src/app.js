@@ -28,9 +28,11 @@ app.use(cookieParser());
 // Routes import
 import userRouter from './routes/user.routes.js'
 import videoRouter from './routes/video.routes.js'
+import likeRouter from "./routes/like.routes.js"
 
 // Routes declaration
 app.use("/api/v1/users", userRouter)
 app.use("/api/v1/video", videoRouter)
+app.use("/api/v1/like", likeRouter)
 
 export { app }; // Export the app to be used in the index.js file
