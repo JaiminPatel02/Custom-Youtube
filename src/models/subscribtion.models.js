@@ -16,4 +16,4 @@ const subscribtionSchema = new Schema({
         timestamps: true // Automatically adds createdAt and updatedAt fields
     })
 
-export const Subscribtion = mongoose.model("Subscribtion", subscribtionSchema);
+export const Subscription = mongoose.model("Subscription", subscribtionSchema);
