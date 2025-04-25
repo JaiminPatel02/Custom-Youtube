@@ -283,7 +283,8 @@ const getChannelDetails = asyncHandler(async (req, res) => {
         },
         {
             $addFields: {
-                videos: { $ifNull: ["$videos", []] },
+                totalViews: { $sum: "$videos.views" },
+                totalLikes: { $sum: "$videos.likes" },
                 recentVideo: {
                     $arrayElemAt: [
                         {
@@ -325,6 +326,8 @@ const getChannelDetails = asyncHandler(async (req, res) => {
                 avatar: 1,
                 coverImage: 1,
                 totalSubscribers: 1,
+                totalViews: 1,
+                totalLikes: 1,
                 videos: 1,
                 recentVideo: 1,
                 tweets: 1,
@@ -341,13 +344,10 @@ const getChannelDetails = asyncHandler(async (req, res) => {
         new ApiResponse(200, channelDetails[0], "Channel details fetched successfully")
     );
 });
-
-
-
-
 export {
     toggleSubscription,
     getUserChannelSubscribers,
     getSubscribedChannels,
     getChannelDetails
 }
+
