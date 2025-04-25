@@ -1,4 +1,4 @@
-import mongoose, {Schema} from "mongoose";
+import mongoose, { Schema } from "mongoose";
 
 const tweetSchema = new Schema({
     content: {
@@ -7,9 +7,16 @@ const tweetSchema = new Schema({
     },
     owner: {
         type: Schema.Types.ObjectId,
-        ref: "User"
+        ref: "User",
+        required: true
+    },
+    parent: {
+        type: Schema.Types.ObjectId,
+        ref: "Tweet",
+        default: null
     }
-}, {timestamps: true})
+}, {
+    timestamps: true
+});
 
-
-export const Tweet = mongoose.model("Tweet", tweetSchema)
+export const Tweet = mongoose.model("Tweet", tweetSchema);

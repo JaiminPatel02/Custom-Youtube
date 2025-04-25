@@ -31,6 +31,7 @@ import videoRouter from './routes/video.routes.js'
 import likeRouter from "./routes/like.routes.js"
 import subscription from "./routes/subscription.routes.js"
 import comment from "./routes/comment.routes.js"
+import tweet from "./routes/tweet.routes.js"
 
 // Routes declaration
 app.use("/api/v1/users", userRouter)
@@ -38,6 +39,7 @@ app.use("/api/v1/video", videoRouter)
 app.use("/api/v1/like", likeRouter)
 app.use("/api/v1/subscription", subscription)
 app.use("/api/v1/comment", comment)
+app.use("/api/v1/tweet", tweet)
 
 
 export { app }; // Export the app to be used in the index.js file
